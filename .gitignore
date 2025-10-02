@@ -1,0 +1,50 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.docstates
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio cache files
+*.cache
+*.tmp
+*.log
+
+# Environment variables
+.env
+*.env
+
+# IDE
+.vscode/
+.vs/
+
+# Package files
+*.nupkg
+*.snupkg
+
+# NuGet
+packages/
+
+# Entity Framework
+Migrations/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates

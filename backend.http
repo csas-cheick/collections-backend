@@ -1,0 +1,102 @@
+@backend_HostAddress = http://localhost:5120
+@token = YOUR_JWT_TOKEN_HERE
+
+# Créer un utilisateur de test
+POST {{backend_HostAddress}}/api/users/create-test-user
+Content-Type: application/json
+
+###
+
+# Lister tous les utilisateurs
+GET {{backend_HostAddress}}/api/users
+Accept: application/json
+
+###
+
+# Test de l'authentification - Login
+POST {{backend_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "emailOrUsername": "test@email.com",
+  "password": "motdepasse123"
+}
+
+###
+
+# Test de l'authentification - Login avec username
+POST {{backend_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "emailOrUsername": "testuser",
+  "password": "motdepasse123"
+}
+
+###
+
+# Test avec mauvais mot de passe
+POST {{backend_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "emailOrUsername": "test@email.com",
+  "password": "mauvais_mdp"
+}
+
+###
+
+# ========== MODELES API TESTS ==========
+
+# Récupérer tous les modèles
+GET {{backend_HostAddress}}/api/modeles
+Authorization: Bearer {{token}}
+Accept: application/json
+
+###
+
+# Récupérer un modèle par ID
+GET {{backend_HostAddress}}/api/modeles/1
+Authorization: Bearer {{token}}
+Accept: application/json
+
+###
+
+# Créer un nouveau modèle (avec fichier image)
+# Note: Ce test nécessite un outil comme Postman ou un client REST qui supporte les fichiers
+POST {{backend_HostAddress}}/api/modeles
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data
+
+# Body à utiliser dans Postman:
+# - Price: 99.99 (form-data)
+# - ImageFile: [sélectionner un fichier image] (file)
+
+###
+
+# Mettre à jour un modèle (prix seulement)
+PUT {{backend_HostAddress}}/api/modeles/1
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data
+
+# Body à utiliser dans Postman:
+# - Price: 149.99 (form-data)
+
+###
+
+# Mettre à jour un modèle (avec nouvelle image)
+PUT {{backend_HostAddress}}/api/modeles/1
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data
+
+# Body à utiliser dans Postman:
+# - Price: 149.99 (form-data)
+# - ImageFile: [sélectionner un fichier image] (file)
+
+###
+
+# Supprimer un modèle
+DELETE {{backend_HostAddress}}/api/modeles/1
+Authorization: Bearer {{token}}
+
+###
