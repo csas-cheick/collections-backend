@@ -44,7 +44,7 @@ namespace backend.Data
                 .HasPrecision(5, 2);
 
             modelBuilder.Entity<Measure>()
-                .Property(m => m.TourHanches)
+                .Property(m => m.TourCeinture)
                 .HasPrecision(5, 2);
 
             modelBuilder.Entity<Measure>()

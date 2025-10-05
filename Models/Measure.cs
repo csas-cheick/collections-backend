@@ -11,13 +11,16 @@ namespace backend.Models
         [Required]
         public int CustomerId { get; set; }
         public decimal? TourPoitrine { get; set; }
-        public decimal? TourHanches { get; set; }        
+        public decimal? TourCeinture { get; set; }        
         public decimal? LongueurManche { get; set; }
         public decimal? TourBras { get; set; }        
         public decimal? LongueurChemise { get; set; }
         public decimal? LongueurPantalon { get; set; }
         public decimal? LargeurEpaules { get; set; }
         public decimal? TourCou { get; set; }
+        public decimal? TourMachette { get; set; }
+        public decimal? BasDuPied { get; set; }
+        public decimal? Cuisse { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
         // Navigation property vers Customer

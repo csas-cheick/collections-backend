@@ -9,10 +9,12 @@ namespace backend.Services
     public class UserService : IUserService
     {
         private readonly AppDbContext _context;
+        private readonly ICloudinaryService _cloudinaryService;
 
-        public UserService(AppDbContext context)
+        public UserService(AppDbContext context, ICloudinaryService cloudinaryService)
         {
             _context = context;
+            _cloudinaryService = cloudinaryService;
         }
 
         public async Task<UserListResponseDto> GetAllUsersAsync(int page = 1, int pageSize = 10, string? search = null, string? role = null, bool? status = null)
@@ -182,7 +184,7 @@ namespace backend.Services
             }
         }
 
-        public async Task<UserOperationResponseDto> CreateUserAsync(CreateUserDto createUserDto)
+        public async Task<UserOperationResponseDto> CreateUserAsync(CreateUserDto createUserDto, IFormFile? pictureFile = null)
         {
             try
             {
@@ -206,6 +208,21 @@ namespace backend.Services
                     };
                 }
 
+                // Uploader l'image si fournie
+                string? pictureUrl = null;
+                if (pictureFile != null)
+                {
+                    try
+                    {
+                        pictureUrl = await _cloudinaryService.UploadImageAsync(pictureFile, "users");
+                    }
+                    catch (Exception uploadEx)
+                    {
+                        // Si l'upload échoue, on continue sans image
+                        Console.WriteLine($"Erreur upload image: {uploadEx.Message}");
+                    }
+                }
+
                 // Hasher le mot de passe
                 var hashedPassword = BCrypt.Net.BCrypt.HashPassword(createUserDto.Password);
 
@@ -215,12 +232,12 @@ namespace backend.Services
                     UserName = createUserDto.UserName,
                     Phone = createUserDto.Phone,
                     Email = createUserDto.Email,
-                    Password = hashedPassword,
+                    Password = createUserDto.Password,
                     Role = createUserDto.Role,
                     Country = createUserDto.Country,
                     City = createUserDto.City,
                     Status = createUserDto.Status,
-                    Picture = createUserDto.Picture
+                    Picture = pictureUrl ?? createUserDto.Picture
                 };
 
                 _context.User.Add(user);
@@ -256,7 +273,7 @@ namespace backend.Services
             }
         }
 
-        public async Task<UserOperationResponseDto> UpdateUserAsync(int id, UpdateUserDto updateUserDto)
+        public async Task<UserOperationResponseDto> UpdateUserAsync(int id, UpdateUserDto updateUserDto, IFormFile? pictureFile = null)
         {
             try
             {
@@ -297,6 +314,21 @@ namespace backend.Services
                     };
                 }
 
+                // Uploader l'image si fournie
+                string? pictureUrl = null;
+                if (pictureFile != null)
+                {
+                    try
+                    {
+                        pictureUrl = await _cloudinaryService.UploadImageAsync(pictureFile, "users");
+                    }
+                    catch (Exception uploadEx)
+                    {
+                        // Si l'upload échoue, on continue sans modifier l'image
+                        Console.WriteLine($"Erreur upload image: {uploadEx.Message}");
+                    }
+                }
+
                 // Mettre à jour les propriétés
                 user.Name = updateUserDto.Name;
                 user.UserName = updateUserDto.UserName;
@@ -306,7 +338,16 @@ namespace backend.Services
                 user.Country = updateUserDto.Country;
                 user.City = updateUserDto.City;
                 user.Status = updateUserDto.Status;
-                user.Picture = updateUserDto.Picture;
+                
+                // Mettre à jour la photo seulement si une nouvelle image a été uploadée ou si une URL est fournie
+                if (pictureUrl != null)
+                {
+                    user.Picture = pictureUrl;
+                }
+                else if (updateUserDto.Picture != null)
+                {
+                    user.Picture = updateUserDto.Picture;
+                }
 
                 await _context.SaveChangesAsync();
 

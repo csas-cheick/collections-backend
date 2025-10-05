@@ -32,7 +32,8 @@ public partial class Program
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("AllowFrontend",
-                policy => policy.WithOrigins("http://localhost:5173","https://collections-f6e2.onrender.com","https://collections-f6e2.onrender.com")
+                policy => policy.WithOrigins("http://localhost:5173","https://collections-f6e2.onrender.com")
+
                                 .AllowAnyHeader()
                                 .AllowAnyMethod()
                                 .AllowCredentials());

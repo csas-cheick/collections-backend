@@ -68,7 +68,7 @@ namespace backend.Controllers
         /// Créer un nouvel utilisateur
         /// </summary>
         [HttpPost]
-        public async Task<ActionResult<UserOperationResponseDto>> CreateUser(CreateUserDto createUserDto)
+        public async Task<ActionResult<UserOperationResponseDto>> CreateUser([FromForm] CreateUserRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -79,21 +79,45 @@ namespace backend.Controllers
                 });
             }
 
-            var result = await _userService.CreateUserAsync(createUserDto);
-            
-            if (!result.Success)
+            try
             {
-                return BadRequest(result);
-            }
+                var createDto = new CreateUserDto
+                {
+                    Name = request.Name,
+                    UserName = request.UserName,
+                    Phone = request.Phone,
+                    Email = request.Email,
+                    Password = request.Password,
+                    Role = request.Role,
+                    Country = request.Country,
+                    City = request.City,
+                    Status = request.Status
+                };
 
-            return CreatedAtAction(nameof(GetUser), new { id = result.User!.Id }, result);
+                var result = await _userService.CreateUserAsync(createDto, request.PictureFile);
+                
+                if (!result.Success)
+                {
+                    return BadRequest(result);
+                }
+
+                return CreatedAtAction(nameof(GetUser), new { id = result.User!.Id }, result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new UserOperationResponseDto
+                {
+                    Success = false,
+                    Message = $"Erreur lors de la création de l'utilisateur: {ex.Message}"
+                });
+            }
         }
 
         /// <summary>
         /// Mettre à jour un utilisateur
         /// </summary>
         [HttpPut("{id}")]
-        public async Task<ActionResult<UserOperationResponseDto>> UpdateUser(int id, UpdateUserDto updateUserDto)
+        public async Task<ActionResult<UserOperationResponseDto>> UpdateUser(int id, [FromForm] UpdateUserRequest request)
         {
             if (id <= 0)
             {
@@ -113,14 +137,37 @@ namespace backend.Controllers
                 });
             }
 
-            var result = await _userService.UpdateUserAsync(id, updateUserDto);
-            
-            if (!result.Success)
+            try
             {
-                return BadRequest(result);
-            }
+                var updateDto = new UpdateUserDto
+                {
+                    Name = request.Name,
+                    UserName = request.UserName,
+                    Phone = request.Phone,
+                    Email = request.Email,
+                    Role = request.Role,
+                    Country = request.Country,
+                    City = request.City,
+                    Status = request.Status
+                };
 
-            return Ok(result);
+                var result = await _userService.UpdateUserAsync(id, updateDto, request.PictureFile);
+                
+                if (!result.Success)
+                {
+                    return BadRequest(result);
+                }
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new UserOperationResponseDto
+                {
+                    Success = false,
+                    Message = $"Erreur lors de la mise à jour de l'utilisateur: {ex.Message}"
+                });
+            }
         }
 
         /// <summary>
@@ -252,5 +299,38 @@ namespace backend.Controllers
 
             return Ok(result);
         }
+    }
+
+    /// <summary>
+    /// Classe de requête pour la création d'un utilisateur
+    /// </summary>
+    public class CreateUserRequest
+    {
+        public string Name { get; set; } = string.Empty;
+        public string UserName { get; set; } = string.Empty;
+        public string? Phone { get; set; }
+        public string Email { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public string Role { get; set; } = string.Empty;
+        public string? Country { get; set; }
+        public string? City { get; set; }
+        public bool Status { get; set; } = true;
+        public IFormFile? PictureFile { get; set; }
+    }
+
+    /// <summary>
+    /// Classe de requête pour la mise à jour d'un utilisateur
+    /// </summary>
+    public class UpdateUserRequest
+    {
+        public string Name { get; set; } = string.Empty;
+        public string UserName { get; set; } = string.Empty;
+        public string? Phone { get; set; }
+        public string Email { get; set; } = string.Empty;
+        public string Role { get; set; } = string.Empty;
+        public string? Country { get; set; }
+        public string? City { get; set; }
+        public bool Status { get; set; }
+        public IFormFile? PictureFile { get; set; }
     }
 }

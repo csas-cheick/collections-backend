@@ -57,7 +57,7 @@ namespace backend.Services
                     Id = customer.Measure.Id,
                     CustomerId = customer.Measure.CustomerId,
                     TourPoitrine = customer.Measure.TourPoitrine,
-                    TourHanches = customer.Measure.TourHanches,
+                    TourCeinture = customer.Measure.TourCeinture,
                     LongueurManche = customer.Measure.LongueurManche,
                     TourBras = customer.Measure.TourBras,
                     LongueurChemise = customer.Measure.LongueurChemise,
@@ -172,7 +172,7 @@ namespace backend.Services
                         Id = customer.Measure.Id,
                         CustomerId = customer.Measure.CustomerId,
                         TourPoitrine = customer.Measure.TourPoitrine,
-                        TourHanches = customer.Measure.TourHanches,
+                        TourCeinture = customer.Measure.TourCeinture,
                         LongueurManche = customer.Measure.LongueurManche,
                         TourBras = customer.Measure.TourBras,
                         LongueurChemise = customer.Measure.LongueurChemise,
@@ -225,7 +225,7 @@ namespace backend.Services
                 Id = measure.Id,
                 CustomerId = measure.CustomerId,
                 TourPoitrine = measure.TourPoitrine,
-                TourHanches = measure.TourHanches,
+                TourCeinture = measure.TourCeinture,
                 LongueurManche = measure.LongueurManche,
                 TourBras = measure.TourBras,
                 LongueurChemise = measure.LongueurChemise,
@@ -253,7 +253,7 @@ namespace backend.Services
                 {
                     // Mise à jour des mesures existantes
                     existingMeasure.TourPoitrine = measureDto.TourPoitrine;
-                    existingMeasure.TourHanches = measureDto.TourHanches;
+                    existingMeasure.TourCeinture = measureDto.TourCeinture;
                     existingMeasure.LongueurManche = measureDto.LongueurManche;
                     existingMeasure.TourBras = measureDto.TourBras;
                     existingMeasure.LongueurChemise = measureDto.LongueurChemise;
@@ -269,7 +269,7 @@ namespace backend.Services
                         Id = existingMeasure.Id,
                         CustomerId = existingMeasure.CustomerId,
                         TourPoitrine = existingMeasure.TourPoitrine,
-                        TourHanches = existingMeasure.TourHanches,
+                        TourCeinture = existingMeasure.TourCeinture,
                         LongueurManche = existingMeasure.LongueurManche,
                         TourBras = existingMeasure.TourBras,
                         LongueurChemise = existingMeasure.LongueurChemise,
@@ -287,7 +287,7 @@ namespace backend.Services
                     {
                         CustomerId = customerId,
                         TourPoitrine = measureDto.TourPoitrine,
-                        TourHanches = measureDto.TourHanches,
+                        TourCeinture = measureDto.TourCeinture,
                         LongueurManche = measureDto.LongueurManche,
                         TourBras = measureDto.TourBras,
                         LongueurChemise = measureDto.LongueurChemise,
@@ -306,7 +306,7 @@ namespace backend.Services
                         Id = newMeasure.Id,
                         CustomerId = newMeasure.CustomerId,
                         TourPoitrine = newMeasure.TourPoitrine,
-                        TourHanches = newMeasure.TourHanches,
+                        TourCeinture = newMeasure.TourCeinture,
                         LongueurManche = newMeasure.LongueurManche,
                         TourBras = newMeasure.TourBras,
                         LongueurChemise = newMeasure.LongueurChemise,
