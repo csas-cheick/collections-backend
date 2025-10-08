@@ -97,4 +97,45 @@ namespace backend.Dtos
         public string? SortBy { get; set; } = "DateTransaction"; // Champ de tri
         public string? SortOrder { get; set; } = "desc"; // "asc" ou "desc"
     }
+
+    // DTO pour les transactions groupées par semaine
+    public class TransactionsParSemaineDto
+    {
+        public int Annee { get; set; }
+        public int NumeroSemaine { get; set; }
+        public DateTime DebutSemaine { get; set; }
+        public DateTime FinSemaine { get; set; }
+        public List<TransactionResponseDto> Transactions { get; set; } = new List<TransactionResponseDto>();
+        public TotauxSemaineDto Totaux { get; set; } = new TotauxSemaineDto();
+    }
+
+    // DTO pour les totaux d'une semaine
+    public class TotauxSemaineDto
+    {
+        public decimal TotalEntrees { get; set; }
+        public decimal TotalSorties { get; set; }
+        public decimal SoldeNet { get; set; }
+        public int NombreTransactions { get; set; }
+        public int NombreEntrees { get; set; }
+        public int NombreSorties { get; set; }
+    }
+
+    // DTO pour la réponse complète des transactions par semaine
+    public class TransactionsGroupeesParSemaineResponseDto
+    {
+        public List<TransactionsParSemaineDto> Semaines { get; set; } = new List<TransactionsParSemaineDto>();
+        public TotauxGenerauxDto TotauxGeneraux { get; set; } = new TotauxGenerauxDto();
+    }
+
+    // DTO pour les totaux généraux sur toute la période
+    public class TotauxGenerauxDto
+    {
+        public decimal TotalEntreesGenerales { get; set; }
+        public decimal TotalSortiesGenerales { get; set; }
+        public decimal SoldeNetGeneral { get; set; }
+        public int NombreTransactionsTotal { get; set; }
+        public int NombreSemaines { get; set; }
+        public DateTime PeriodeDebut { get; set; }
+        public DateTime PeriodeFin { get; set; }
+    }
 }

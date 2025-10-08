@@ -11,5 +11,6 @@ namespace backend.Services.IServices
         Task<bool> DeleteTransactionAsync(int id);
         Task<StatistiquesCaisseDto> GetStatistiquesAsync(DateTime? dateDebut = null, DateTime? dateFin = null);
         Task<IEnumerable<string>> GetCategoriesAsync();
+        Task<TransactionsGroupeesParSemaineResponseDto> GetTransactionsGroupeesParSemaineAsync(DateTime? dateDebut = null, DateTime? dateFin = null);
     }
 }

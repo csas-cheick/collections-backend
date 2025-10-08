@@ -223,5 +223,104 @@ namespace backend.Services
                 MontantAvecSigne = transaction.MontantAvecSigne
             };
         }
+
+        public async Task<TransactionsGroupeesParSemaineResponseDto> GetTransactionsGroupeesParSemaineAsync(DateTime? dateDebut = null, DateTime? dateFin = null)
+        {
+            // Si aucune date n'est spécifiée, prendre les 30 derniers jours
+            var finPeriode = dateFin ?? DateTime.Now.Date.AddDays(1).AddSeconds(-1);
+            var debutPeriode = dateDebut ?? DateTime.Now.Date.AddDays(-30);
+
+            // Récupérer toutes les transactions dans la période
+            var transactions = await _context.Transaction
+                .Where(t => t.DateTransaction >= debutPeriode && t.DateTransaction <= finPeriode)
+                .OrderBy(t => t.DateTransaction)
+                .ToListAsync();
+
+            // Grouper par semaine
+            var semainesGroupees = transactions
+                .GroupBy(t => new
+                {
+                    Annee = GetWeekYear(t.DateTransaction),
+                    NumeroSemaine = GetWeekOfYear(t.DateTransaction)
+                })
+                .Select(g => new TransactionsParSemaineDto
+                {
+                    Annee = g.Key.Annee,
+                    NumeroSemaine = g.Key.NumeroSemaine,
+                    DebutSemaine = GetFirstDayOfWeek(g.First().DateTransaction),
+                    FinSemaine = GetLastDayOfWeek(g.First().DateTransaction),
+                    Transactions = g.Select(MapToResponseDto).ToList(),
+                    Totaux = CalculerTotauxSemaine(g.ToList())
+                })
+                .OrderBy(s => s.Annee)
+                .ThenBy(s => s.NumeroSemaine)
+                .ToList();
+
+            // Calculer les totaux généraux
+            var totauxGeneraux = new TotauxGenerauxDto
+            {
+                TotalEntreesGenerales = transactions.Where(t => t.Type == "ENTREE").Sum(t => t.Montant),
+                TotalSortiesGenerales = transactions.Where(t => t.Type == "SORTIE").Sum(t => t.Montant),
+                SoldeNetGeneral = transactions.Sum(t => t.MontantAvecSigne),
+                NombreTransactionsTotal = transactions.Count,
+                NombreSemaines = semainesGroupees.Count,
+                PeriodeDebut = debutPeriode,
+                PeriodeFin = finPeriode
+            };
+
+            return new TransactionsGroupeesParSemaineResponseDto
+            {
+                Semaines = semainesGroupees,
+                TotauxGeneraux = totauxGeneraux
+            };
+        }
+
+        private static int GetWeekOfYear(DateTime date)
+        {
+            // Utilise la norme ISO 8601 pour déterminer le numéro de semaine
+            var day = (int)System.Globalization.CultureInfo.CurrentCulture.Calendar.GetDayOfWeek(date);
+            if (day >= 0 && day <= 6)
+                date = date.AddDays(3);
+
+            return System.Globalization.CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(
+                date, System.Globalization.CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
+        }
+
+        private static int GetWeekYear(DateTime date)
+        {
+            var weekNum = GetWeekOfYear(date);
+            if (weekNum >= 52 && date.Month == 1)
+                return date.Year - 1;
+            if (weekNum == 1 && date.Month == 12)
+                return date.Year + 1;
+            return date.Year;
+        }
+
+        private static DateTime GetFirstDayOfWeek(DateTime date)
+        {
+            var diff = (7 + (date.DayOfWeek - DayOfWeek.Monday)) % 7;
+            return date.AddDays(-diff).Date;
+        }
+
+        private static DateTime GetLastDayOfWeek(DateTime date)
+        {
+            return GetFirstDayOfWeek(date).AddDays(6);
+        }
+
+        private static TotauxSemaineDto CalculerTotauxSemaine(List<Transaction> transactions)
+        {
+            var entrees = transactions.Where(t => t.Type == "ENTREE").ToList();
+            var sorties = transactions.Where(t => t.Type == "SORTIE").ToList();
+
+            return new TotauxSemaineDto
+            {
+                TotalEntrees = entrees.Sum(t => t.Montant),
+                TotalSorties = sorties.Sum(t => t.Montant),
+                SoldeNet = transactions.Sum(t => t.MontantAvecSigne),
+                NombreTransactions = transactions.Count,
+                NombreEntrees = entrees.Count,
+                NombreSorties = sorties.Count
+            };
+        }
     }
 }

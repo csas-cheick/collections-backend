@@ -6,8 +6,11 @@ namespace backend.Dtos
     public class OrderItemDto
     {
         public int Id { get; set; }
-        public int ModeleId { get; set; }
-        public string ModeleNom { get; set; } = string.Empty;
+        public int? ModeleId { get; set; }
+        public string? ModeleNom { get; set; }
+        public bool IsCustomModel { get; set; }
+        public string? CustomModelName { get; set; }
+        public decimal? CustomModelPrice { get; set; }
         public string TypeTissu { get; set; } = string.Empty;
         public string Couleur { get; set; } = string.Empty;
         public decimal PrixUnitaire { get; set; }
@@ -17,8 +20,14 @@ namespace backend.Dtos
 
     public class CreateOrderItemDto
     {
-        [Required]
-        public int ModeleId { get; set; }
+        public int? ModeleId { get; set; }
+
+        public bool IsCustomModel { get; set; } = false;
+
+        [MaxLength(200)]
+        public string? CustomModelName { get; set; }
+
+        public decimal? CustomModelPrice { get; set; }
 
         [Required]
         [MaxLength(100)]

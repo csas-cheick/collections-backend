@@ -157,5 +157,22 @@ namespace backend.Controllers
                 return StatusCode(500, new { message = "Erreur lors de la récupération des catégories", error = ex.Message });
             }
         }
+
+        /// <summary>
+        /// Récupérer les transactions groupées par semaine
+        /// </summary>
+        [HttpGet("par-semaine")]
+        public async Task<ActionResult<TransactionsGroupeesParSemaineResponseDto>> GetTransactionsParSemaine([FromQuery] DateTime? dateDebut = null, [FromQuery] DateTime? dateFin = null)
+        {
+            try
+            {
+                var transactionsGroupees = await _transactionService.GetTransactionsGroupeesParSemaineAsync(dateDebut, dateFin);
+                return Ok(transactionsGroupees);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Erreur lors de la récupération des transactions par semaine", error = ex.Message });
+            }
+        }
     }
 }

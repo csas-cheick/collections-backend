@@ -11,8 +11,17 @@ namespace backend.Models
         [Required]
         public int OrderId { get; set; }
 
-        [Required]
-        public int ModeleId { get; set; }
+        // ModeleId est nullable pour permettre les modèles personnalisés
+        public int? ModeleId { get; set; }
+
+        // Champs pour les modèles personnalisés
+        public bool IsCustomModel { get; set; } = false;
+
+        [MaxLength(200)]
+        public string? CustomModelName { get; set; }
+
+        [Column(TypeName = "decimal(8,2)")]
+        public decimal? CustomModelPrice { get; set; }
 
         [Required]
         [MaxLength(100)]
@@ -38,6 +47,6 @@ namespace backend.Models
         public virtual Order Order { get; set; } = null!;
 
         [ForeignKey("ModeleId")]
-        public virtual Modele Modele { get; set; } = null!;
+        public virtual Modele? Modele { get; set; }
     }
 }
